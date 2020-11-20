@@ -1,5 +1,7 @@
 let FormData = require('form-data');
 let fetch = require("node-fetch").default
+let fs = require("fs")
+let os = require("os")
 class KasiopeaAPI {
     constructor() {
         /**
@@ -10,6 +12,11 @@ class KasiopeaAPI {
          * User's auth cookie
          */
         this.cookie = null
+
+        /**
+         * Easy or hard task, 1 (easy) or 2 (hard), defaults to 1
+         */
+        this.eoh = 1
     }
 
     /**
@@ -42,20 +49,18 @@ class KasiopeaAPI {
     /**
      * Get task input
      * @param {String} pathToTask
-     * @param {Number} easyOrHard 
-     * @returns {String}
+     * @returns {Promise}
      */
-    getTask(url, eoh) {
+    getTask(url) {
         return new Promise(async(resolve, reject) => {
             if (!url) reject("You need to enter a URL to a task, ex.: '/archiv/2019/doma/A/'")
             if (!url.startsWith("/")) url = "/" + url
             if (!url.endsWith("/")) url = url + "/"
-            if (isNaN(eoh) || eoh > 2 || eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard)")
+            if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
 
             if (!this.cookie) reject("You need to login using .login('e-mail,'password')")
-            console.log(eoh)
             // generates task
-            let req = await fetch("https://kasiopea.matfyz.cz" + url + "?do=gen&subtask=" + eoh, {
+            let req = await fetch("https://kasiopea.matfyz.cz" + url + "?do=gen&subtask=" + this.eoh, {
                 method: 'GET',
                 headers: {
                     Cookie: this.cookie
@@ -64,7 +69,7 @@ class KasiopeaAPI {
                 reject(e.message)
             })
             //downloads task
-            req = fetch("https://kasiopea.matfyz.cz" + url + "?do=get&subtask=" + eoh, {
+            req = fetch("https://kasiopea.matfyz.cz" + url + "?do=get&subtask=" + this.eoh, {
                     method: 'GET',
                     headers: {
                         Cookie: this.cookie,
@@ -79,6 +84,48 @@ class KasiopeaAPI {
                 .catch((e) => {
                     reject(e.message)
                 })
+        })
+    }
+
+    /**
+     * Send result
+     * @param {String} output 
+     * @returns {Promise}
+     */
+    sendResult(output){
+        return new Promise((resolve,reject)=>{
+            if(!output) reject("You need to pass the output of the program to send.")
+            if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
+
+            if (!this.cookie) reject("You need to login using .login('e-mail,'password')")
+            let tmp = (os.platform == 'win32')?"\\tmp":"/tmp"
+            if(!fs.existsSync(__dirname+tmp)) {
+                try {
+                    fs.mkdirSync(__dirname+tmp)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+            fs.writeFileSync(__dirname+tmp+"/result.txt",output)
+            let sendData = new FormData()
+            sendData.append("f",fs.createReadStream(__dirname+tmp+"/result.txt"))
+            sendData.append("do","send")
+            sendData.append("subtask",this.eoh)
+            fetch("https://kasiopea.matfyz.cz/archiv/2019/doma/A/",{
+                method:"POST",
+                headers:{
+                    Cookie:this.cookie,
+                },
+                body:sendData
+            }).then(async (r)=>{
+                let resp = await r.text()
+                fs.writeFileSync("./kek.txt",resp)
+                let error = resp.match(/<p class='error'>.*(<?\/p>)/)
+                if(error.length > 0 && error[0].replace("<p class='error'>",'').replace("</p>","")!="Soutež skončila. Získané body již nejdou do výsledků." && error[0].replace("<p class='error'>",'').replace("</p>","")!="Nejsi finalista, takže se neobjevíš ve výsledcích.") reject(error[0].replace("<p class='error'>",'').replace("</p>",""))
+                else resolve(true)
+            }).catch((e)=>{
+                reject(e)
+            })
         })
     }
 }
