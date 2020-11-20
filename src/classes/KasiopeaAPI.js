@@ -107,17 +107,17 @@ class KasiopeaAPI {
             if (!url.endsWith("/")) url = url + "/"
 
             if (!this.cookie) reject("You need to login using .login('e-mail,'password')")
-            let tmp = (os.platform == 'win32')?"\\tmp":"/tmp"
-            if(!fs.existsSync(__dirname+tmp)) {
+            let tmp = "/kasiotmp"
+            if(!fs.existsSync(os.tmpdir()+tmp)) {
                 try {
-                    fs.mkdirSync(__dirname+tmp)
+                    fs.mkdirSync(os.tmpdir()+tmp)
                 } catch (error) {
                     reject(error)
                 }
             }
-            fs.writeFileSync(__dirname+tmp+"/result.txt",output)
+            fs.writeFileSync(os.tmpdir()+tmp+"/result.txt",output)
             let sendData = new FormData()
-            sendData.append("f",fs.createReadStream(__dirname+tmp+"/result.txt"))
+            sendData.append("f",fs.createReadStream(os.tmpdir()+tmp+"/result.txt"))
             sendData.append("do","send")
             sendData.append("subtask",this.eoh)
             fetch("https://kasiopea.matfyz.cz"+url,{
