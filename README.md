@@ -18,7 +18,7 @@ Agent.login("email", "heslo").then(async (ag) => { // MÍSTO email A heslo NAPI�
     // SEM VLOŽTE VÁŠ KÓD
     
     let vysledek = await l.sendResult(reseni) // PROMĚNNOU "reseni" MUSÍTE VYTVOŘIT A MUSÍ BÝT STRING
-    if (vysledek) console.log("Hurá! Úkol odevzdán") // KDYŽ SE VÝSLEDEK ÚSPĚŠNĚ ODEŠLE A JE SPRÁVNÝ, VRÁTÍ FUNKCE l.sendResult TRUE, POKUD BUDE NĚJAKÝ PROBLÉM PŘI ODESÍLÁNÍ NEBO JE VÝSLEDEK NESPRÁVNÝ, VRÁTI PromiseRejectionError
+    if (vysledek) console.log("Hurá! Úkol odevzdán") // KDYŽ SE VÝSLEDEK ÚSPĚŠNĚ ODEŠLE A JE SPRÁVNÝ, VRÁTÍ FUNKCE l.sendResult TRUE, POKUD BUDE NĚJAKÝ PROBLÉM PŘI ODESÍLÁNÍ NEBO JE VÝSLEDEK NESPRÁVNÝ, VRÁTI PromiseRejectionWarning
 })
 ```
 
