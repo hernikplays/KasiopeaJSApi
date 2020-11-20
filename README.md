@@ -1,5 +1,5 @@
 # KasiopeaJSApi
- Neoficiální API [soutěže Kasiopea](https://kasiopea.matfyz.cz) pro NodeJS
+ Neoficiální API [soutěže Kasiopea](https://kasiopea.matfyz.cz) pro NodeJS, těžce inspirováno [KasiopeaAPI](https://github.com/sorashi/KasiopeaApi/)
  
 ## Instalace
 `npm i kasiopeajsapi`
