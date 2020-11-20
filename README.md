@@ -24,3 +24,4 @@ Agent.login("email", "heslo").then(async (ag) => { // MÍSTO email A heslo NAPI�
 
 ## [Funkční příklad](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A.js)
 
+Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays) nebo Mastodon [https://makiroll.space/@hernik]
