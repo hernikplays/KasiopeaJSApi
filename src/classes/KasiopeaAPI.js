@@ -54,12 +54,15 @@ class KasiopeaAPI {
     }
     /**
      * Get task input
+     * @param {String} url
      * @returns {Promise}
      */
-    getTask() {
+    getTask(link) {
         return new Promise(async(resolve, reject) => {
-            if(!this.url) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"'`)
-            let url = this.url
+            if(!this.url&&!link) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"' or set the URL manually as a parameter`)
+            let url
+            if(!link) url = this.url
+            else url = link
             if (!url.startsWith("/")) url = "/" + url
             if (!url.endsWith("/")) url = url + "/"
             if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
@@ -96,14 +99,19 @@ class KasiopeaAPI {
     /**
      * Send result
      * @param {String} output 
+     * @param {String} url
      * @returns {Promise}
      */
-    sendResult(output){
+    sendResult(output,link){
         return new Promise((resolve,reject)=>{
             if(!output) reject("You need to pass the output of the program to send.")
             if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
-            if(!this.url) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"'`)
-            let url = this.url
+            if(!this.url&&!link) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"' or set the URL manually as a parameter`)
+            
+            let url
+
+            if(!link)url = this.url
+            else url = link
             if (!url.startsWith("/")) url = "/" + url
             if (!url.endsWith("/")) url = url + "/"
 
