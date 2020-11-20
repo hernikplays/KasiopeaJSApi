@@ -7,6 +7,11 @@
 `npm i kasiopeajsapi`
  
  Měla by být podporována LTS verze Node.js
+## API zvládne
+- [x] Přihlásit se pod vaším jménem
+- [x] Stáhnout vstup a odeslat výsledek
+- [ ] Získat informace o úkolu (Jméno, popis)
+- [ ] Číst tabulku výsledků
 
 ## Příklad použití
 ```js
