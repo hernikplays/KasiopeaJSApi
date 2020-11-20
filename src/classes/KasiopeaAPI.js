@@ -17,6 +17,11 @@ class KasiopeaAPI {
          * Easy or hard task, 1 (easy) or 2 (hard), defaults to 1
          */
         this.eoh = 1
+
+        /**
+         * URL to the task, ex: '/archiv/2019/doma/B/'
+         */
+        this.url = null
     }
 
     /**
@@ -48,12 +53,12 @@ class KasiopeaAPI {
     }
     /**
      * Get task input
-     * @param {String} pathToTask
      * @returns {Promise}
      */
-    getTask(url) {
+    getTask() {
         return new Promise(async(resolve, reject) => {
-            if (!url) reject("You need to enter a URL to a task, ex.: '/archiv/2019/doma/A/'")
+            if(!this.url) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"'`)
+            let url = this.url
             if (!url.startsWith("/")) url = "/" + url
             if (!url.endsWith("/")) url = url + "/"
             if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
@@ -96,6 +101,10 @@ class KasiopeaAPI {
         return new Promise((resolve,reject)=>{
             if(!output) reject("You need to pass the output of the program to send.")
             if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1) reject("easyOrHard is not a number or is not 1 (easy) nor 2 (hard), set it with '.eoh = 1'")
+            if(!this.url) reject(`You need to set the URL using .url, ex: '.url = "/archiv/2019/doma/A/"'`)
+            let url = this.url
+            if (!url.startsWith("/")) url = "/" + url
+            if (!url.endsWith("/")) url = url + "/"
 
             if (!this.cookie) reject("You need to login using .login('e-mail,'password')")
             let tmp = (os.platform == 'win32')?"\\tmp":"/tmp"
@@ -111,7 +120,7 @@ class KasiopeaAPI {
             sendData.append("f",fs.createReadStream(__dirname+tmp+"/result.txt"))
             sendData.append("do","send")
             sendData.append("subtask",this.eoh)
-            fetch("https://kasiopea.matfyz.cz/archiv/2019/doma/A/",{
+            fetch("https://kasiopea.matfyz.cz"+url,{
                 method:"POST",
                 headers:{
                     Cookie:this.cookie,
