@@ -1,0 +1,26 @@
+{
+  "name": "kasiopeajsapi",
+  "version": "1.0.0",
+  "description": "Unofficial API wrapper for kasiopea.matfyz.cz",
+  "main": "./src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hernikplays/KasiopeaJsAPI.git"
+  },
+  "keywords": [
+    "kasiopea"
+  ],
+  "author": "hernik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hernikplays/KasiopeaJsAPI/issues"
+  },
+  "homepage": "https://github.com/hernikplays/KasiopeaJsAPI#readme",
+  "dependencies": {
+    "form-data": "^3.0.0",
+    "node-fetch": "^2.6.1"
+  }
+}
