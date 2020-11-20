@@ -42,6 +42,7 @@ class KasiopeaAPI {
 
             bodyFormData.submit("https://kasiopea.matfyz.cz/auth/login.cgi?done=1", (err, res) => {
                 if (err) reject(err)
+                if(!res.headers["set-cookie"][0]) reject("Wrong e-mail or password, if you are sure, that your e-mail/password combination is correct, please open an issue.")
                 this.cookie = res.headers["set-cookie"][0]
                 if (this.cookie) {
                     this.loggedIn = true
