@@ -137,7 +137,6 @@ class KasiopeaAPI {
                 body:sendData
             }).then(async (r)=>{
                 let resp = await r.text()
-                fs.writeFileSync("./kek.txt",resp)
                 let error = resp.match(/<p class='error'>.*(<?\/p>)/)
                 if(error != null && error[0].replace("<p class='error'>",'').replace("</p>","")!="Soutež skončila. Získané body již nejdou do výsledků." && error[0].replace("<p class='error'>",'').replace("</p>","")!="Nejsi finalista, takže se neobjevíš ve výsledcích.") reject(error[0].replace("<p class='error'>",'').replace("</p>",""))
                 else resolve(true)
