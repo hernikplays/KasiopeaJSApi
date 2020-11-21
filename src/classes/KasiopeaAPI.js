@@ -6,20 +6,24 @@ class KasiopeaAPI {
     constructor() {
         /**
          * Is user logged in?
+         * @type {Boolean}
          */
         this.loggedIn = false
         /**
          * User's auth cookie
+         * @type {String}
          */
         this.cookie = null
 
         /**
          * Easy or hard task, 1 (easy) or 2 (hard), defaults to 1
+         * @type {Number}
          */
         this.eoh = 1
 
         /**
          * URL to the task, ex: '/archiv/2019/doma/B/'
+         * @type {String}
          */
         this.url = null
     }
@@ -29,6 +33,12 @@ class KasiopeaAPI {
      * @param {String} email 
      * @param {String} password 
      * @returns {Promise}
+     * 
+     * @example 
+     * 
+     * Agent.login("email", "password").then(async (l) => {
+     * // your code
+     * })
      */
     login(email, password) {
         return new Promise((resolve, reject) => {
@@ -56,6 +66,9 @@ class KasiopeaAPI {
      * Get task input
      * @param {String} url
      * @returns {Promise}
+     * 
+     * @example
+     * let taskInput = await Agent.getTask()
      */
     getTask(link) {
         return new Promise(async(resolve, reject) => {
@@ -101,6 +114,10 @@ class KasiopeaAPI {
      * @param {String} output 
      * @param {String} url
      * @returns {Promise}
+     * 
+     * @example
+     * let send = "your result of task here"
+     * let result = await Agent.sendResult(send)
      */
     sendResult(output,link){
         return new Promise((resolve,reject)=>{

@@ -5,3 +5,6 @@ let instance = new KasiopeaAPI();
 
 module.exports.Agent = instance;
 
+module.exports ={
+    ResultsInfo:require("./classes/ResultsInfo")
+}

@@ -11,7 +11,7 @@
 - [x] Přihlásit se pod vaším jménem
 - [x] Stáhnout vstup a odeslat výsledek
 - [ ] Získat informace o úkolu (Jméno, popis)
-- [ ] Číst tabulku výsledků
+- [x] Číst tabulku výsledků (i z archivu :)
 
 ## Příklad použití
 ```js
@@ -26,6 +26,12 @@ Agent.login("email", "heslo").then(async (ag) => { // MÍSTO email A heslo NAPI�
     
     let vysledek = await ag.sendResult(reseni) // PROMĚNNOU "reseni" MUSÍTE VYTVOŘIT A MUSÍ BÝT STRING
     if (vysledek) console.log("Hurá! Úkol odevzdán") // KDYŽ SE VÝSLEDEK ÚSPĚŠNĚ ODEŠLE A JE SPRÁVNÝ, VRÁTÍ FUNKCE l.sendResult TRUE, POKUD BUDE NĚJAKÝ PROBLÉM PŘI ODESÍLÁNÍ NEBO JE VÝSLEDEK NESPRÁVNÝ, VRÁTI PromiseRejectionWarning
+
+    
+})
+
+ResultsInfo.getParticipants("/archiv/2019/doma/vysledky.html").then((r) => {
+    console.log(r[0]) // ZÍSKÁ PRVNÍHO
 })
 ```
 
