@@ -15,7 +15,7 @@
 
 ## Příklad použití
 ```js
-const { Agent } = require("kasiopeajsapi")
+const { Agent, ResultsInfo } = require("kasiopeajsapi")
 
 Agent.login("email", "heslo").then(async (ag) => { // MÍSTO email A heslo NAPIŠTE VAŠE PŘIHL. ÚDAJE
     ag.eoh = 2; // NASTAVÍ, JESTLI SE MÁ STÁHNOUT LEHKÝ VSTUP (1) NEBO TĚŽKÝ (2), VÝCHOZÍ HODNOTA JE 1
