@@ -1,6 +1,6 @@
 {
   "name": "kasiopeajsapi",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Unofficial API wrapper for kasiopea.matfyz.cz",
   "main": "./src/main.js",
   "scripts": {
