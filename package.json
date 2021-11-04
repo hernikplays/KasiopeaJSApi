@@ -1,6 +1,6 @@
 {
   "name": "kasiopeajsapi",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Unofficial API wrapper for kasiopea.matfyz.cz",
   "main": "./src/main.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hernikplays/KasiopeaJsAPI.git"
+    "url": "git+https://github.com/hernikplays/KasiopeaJSApi.git"
   },
   "keywords": [
     "kasiopea"
@@ -16,11 +16,17 @@
   "author": "hernik",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hernikplays/KasiopeaJsAPI/issues"
+    "url": "https://github.com/hernikplays/KasiopeaJSApi/issues"
   },
-  "homepage": "https://github.com/hernikplays/KasiopeaJsAPI#readme",
+  "homepage": "https://github.com/hernikplays/KasiopeaJSApi#readme",
+  "funding": "https://cs.liberapay.com/hernikplays",
   "dependencies": {
-    "form-data": "^3.0.0",
-    "node-fetch": "^2.6.1"
+    "axios": "^0.24.0",
+    "form-data": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "2.4.1"
   }
 }

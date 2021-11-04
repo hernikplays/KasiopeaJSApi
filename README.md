@@ -6,7 +6,7 @@
 ## Instalace
 `npm i kasiopeajsapi`
  
- Měla by být podporována LTS verze Node.js
+ Testováno na NodeJS v16.11.1
 ## API zvládne
 - [x] Přihlásit se pod vaším jménem
 - [x] Stáhnout vstup a odeslat výsledek
@@ -37,4 +37,4 @@ ResultsInfo.getParticipants("/archiv/2019/doma/vysledky.html").then((r) => {
 
 ## [Funkční příklad](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A.js)
 
-Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays) nebo [Mastodon](https://makiroll.space/@hernik)
+Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays)
