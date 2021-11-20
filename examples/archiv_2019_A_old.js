@@ -3,10 +3,10 @@ const { Agent } = require("../src/main"); // samozřejmě pokud používáme mim
      To the extent possible under law, Matyáš Caras has waived all copyright 
      and related or neighboring rights to the code contained in file "archiv_2019_A.js".
 */
-Agent.login("m.caras27@gmail.com", "BruhMoment69")
+Agent.login("email", "heslo")
   .then(async (l) => {
     l.eoh = 1; // funguje pro obě obtížnosti
-    l.task = 101; // nastaví odkaz
+    l.url = "/archiv/2019/doma/A/"; // nastaví odkaz
     let taskInput = await l.getTask(); // získá vstup
 
     let split = taskInput.split("\n");

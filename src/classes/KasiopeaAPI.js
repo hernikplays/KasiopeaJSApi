@@ -34,7 +34,19 @@ class KasiopeaAPI {
      * Autentikační sušenka uživatele
      * @type {String}
      */
-    this.cookie = null;
+    this.auth = null;
+
+    /**
+     * Sušenky
+     * @type {String}
+     */
+    this.cookie
+
+    /**
+     * Datum, kdy sušenka vyprší
+     * @type {Date}
+     */
+    this.expires = null
 
     /**
      * Obtížnost, 1 (lehká) nebo 2 (těžká)
@@ -44,17 +56,24 @@ class KasiopeaAPI {
     this.eoh = 1;
 
     /**
-     * URL k úkolu, např.: '/archiv/2019/doma/B/'
-     * @type {String}
+     * ČÍSLO úkolu, jak získat zjistítě {@link https://github.com/hernikplays/KasiopeaJSApi/ zde}
+     * @type {Number}
      */
-    this.url = null;
+    this.task = null;
+
+    /**
+     * ID vstupu, který byl právě vygenerován
+     * @type {String}
+     * 
+     */
+    this.inputId = null;
   }
 
   /**
    * Získá uživatelovu autentikační sušenku
    * @param {String} email
    * @param {String} password
-   * @returns {Promise}
+   * @returns {Promise<Agent>}
    *
    * @example
    *
@@ -65,50 +84,41 @@ class KasiopeaAPI {
   login(email, password) {
     return new Promise((resolve, reject) => {
       if (!email || !password)
-        reject("You need to enter an e-mail and password.");
+        reject("Musíte zadat e-mail a heslo");
 
-      let bodyFormData = new FormData();
-      bodyFormData.append("email", email);
-      bodyFormData.append("passwd", password);
-      bodyFormData.append("redirect", "");
-      bodyFormData.append("submit", "Přihlásit");
-
-      bodyFormData.submit(
-        "https://kasiopea.matfyz.cz/auth/login.cgi?done=1",
-        (err, res) => {
-          if (err) reject(err);
-          if (res.headers["set-cookie"].length < 1)
-            reject(
-              "Neplatný e-mail nebo heslo, pokud si jste jistí, že vaše údaje jsou správné, otevřte si Issue v repozitáři."
-            );
+      axios.post("https://kasiopea.matfyz.cz/api/auth", {email,password}).then(async (res) => {
+        if (res.status < 300 && res.status > 199) {
+          this.loggedIn = true;
+          this.auth = res.data.access_token;
           this.cookie = res.headers["set-cookie"][0];
-          if (this.cookie) {
-            this.loggedIn = true;
-            resolve(this);
-          } else reject("Nepodařilo se získat sušenku.");
+          this.expires = new Date(res.data.access_token_expiry);
+          resolve(this);
+        } else {
+          reject("Chyba při získávání údajů");
         }
-      );
+      }).catch(() => {
+        reject("Něco se pokazilo při přihlašování");
+      });
     });
   }
   /**
    * Získá vstup k úloze
-   * @param {String} url
+   * @param {Number} taskNumber Číslo úkolu
    * @returns {Promise}
    *
    * @example
    * let taskInput = await Agent.getTask()
    */
-  getTask(link) {
+  getTask(taskNumber) {
     return new Promise((resolve, reject) => {
-      if (!this.url && !link)
+      if ((!this.task && !taskNumber))
         reject(
-          `Musíte nastavit URL k úloze pomocí vlastnosti url, např.: '.url = "/archiv/2019/doma/A/"' nebo nastavte URL jako parametr`
+          `Musíte nastavit číslo úlohy pomocí vlastnosti task, např.: '.task = 2' nebo nastavte číslo úlohy jako parametr`
         );
       let url;
-      if (!link) url = this.url;
-      else url = link;
-      if (!url.startsWith("/")) url = "/" + url;
-      if (!url.endsWith("/")) url = url + "/";
+      if (!taskNumber) url = this.task;
+      else url = taskNumber;
+      if(isNaN(url)) reject("Číslo úlohy není číslo");
       if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1)
         reject(
           "easyOrHard není číslo, nebo není nastaveno na 1 (easy) ani 2 (hard), nastavte ho pomocí vlastnosti 'eoh', např.: '.eoh = 1'"
@@ -118,39 +128,45 @@ class KasiopeaAPI {
         reject("Musíte se přihlásit pomocí metody .login('e-mail,'heslo')");
       // vygeneruje úlohu
       axios(
-        "https://kasiopea.matfyz.cz" + url + "?do=gen&subtask=" + this.eoh,
+        "https://kasiopea.matfyz.cz/api/tasks/" + url + "/" + (this.eoh == 1 ? "easy" : "hard"),
         {
-          method: "GET",
+          method: "POST",
           headers: {
+            "X-KASIOPEA-AUTH-TOKEN": "Bearer "+this.auth,
             Cookie: this.cookie,
+            "Accept-Encoding": "gzip,deflate",
           },
         }
       )
+      .then((r) => {
+        // stáhne úlohu
+        if(r.status == 429) reject("Překročen limit generování úloh, zkuste to znovu později");
+        this.inputId = r.data.id;
+        axios(
+          "https://kasiopea.matfyz.cz/api/attempts/" + this.inputId + "/input",
+          {
+            method: "GET",
+            headers: {
+              "X-KASIOPEA-AUTH-TOKEN": "Bearer "+this.auth,
+          Cookie: this.cookie,
+          "Accept-Encoding": "gzip,deflate",
+            },
+            encoding: null,
+          }
+        )
+          .then(async (res) => {
+            if (res.status > 303) reject(res.status + " " + res.statusText);
+
+            resolve(res.data);
+          })
+          .catch((e) => {
+            reject(`getTask CHYBA2:\n${e.message}`);
+          });
+      })
         .catch((e) => {
           reject(`getTask CHYBA:\n${e.message}`);
         })
-        .then(() => {
-          // stáhne úlohu
-          axios(
-            "https://kasiopea.matfyz.cz" + url + "?do=get&subtask=" + this.eoh,
-            {
-              method: "GET",
-              headers: {
-                Cookie: this.cookie,
-                "Accept-Encoding": "gzip,deflate",
-              },
-              encoding: null,
-            }
-          )
-            .then(async (res) => {
-              if (res.status > 303) reject(res.status + " " + res.statusText);
-
-              resolve(res.data);
-            })
-            .catch((e) => {
-              reject(`getTask CHYBA:\n${e.message}`);
-            });
-        });
+        
     });
   }
 
@@ -158,30 +174,23 @@ class KasiopeaAPI {
    * Send result
    * @param {String} output
    * @param {String} url
-   * @returns {Promise}
+   * @returns {Promise<boolean>}
    *
    * @example
    * let send = "your result of task here"
    * let result = await Agent.sendResult(send)
    */
-  sendResult(output, link) {
+  sendResult(output) {
     return new Promise((resolve, reject) => {
       if (!output) reject("Musíte uvést výstup jako argument.");
       if (isNaN(this.eoh) || this.eoh > 2 || this.eoh < 1)
         reject(
           "easyOrHard není číslo, nebo není nastaveno na 1 (easy) ani 2 (hard), nastavte ho pomocí vlastnosti 'eoh', např.: '.eoh = 1'"
         );
-      if (!this.url && !link)
+        if ((!this.task))
         reject(
-          `Musíte nastavit URL k úloze pomocí vlastnosti url, např.: '.url = "/archiv/2019/doma/A/"' nebo nastavte URL jako parametr`
+          `Musíte nastavit číslo úlohy pomocí vlastnosti task, např.: '.task = 2' A získat vstup pomocí metody getTask`
         );
-
-      let url;
-
-      if (!link) url = this.url;
-      else url = link;
-      if (!url.startsWith("/")) url = "/" + url;
-      if (!url.endsWith("/")) url = url + "/";
 
       if (!this.cookie)
         reject("Musíte se přihlásit pomocí metody .login('e-mail,'password')");
@@ -196,31 +205,27 @@ class KasiopeaAPI {
       fs.writeFileSync(os.tmpdir() + tmp + "/result.txt", output);
       let sendData = new FormData();
       sendData.append(
-        "f",
+        "output",
         fs.createReadStream(os.tmpdir() + tmp + "/result.txt")
       );
-      sendData.append("do", "send");
-      sendData.append("subtask", this.eoh);
-      axios("https://kasiopea.matfyz.cz" + url, {
+      let h = sendData.getHeaders()['content-type'];
+      axios("https://kasiopea.matfyz.cz/api/attempts/" + this.inputId + "/submit", {
         method: "POST",
         headers: {
-          Cookie: this.cookie,
+          "X-KASIOPEA-AUTH-TOKEN": "Bearer "+this.auth,
+            Cookie: this.cookie,
+            'content-type':h
         },
         data: sendData,
       })
         .then(async (r) => {
-          let error = r.data.match(/<p class='error'>.*(<?\/p>)/);
-          if (
-            error != null &&
-            error[0].replace("<p class='error'>", "").replace("</p>", "") !=
-              "Soutež skončila. Získané body již nejdou do výsledků." &&
-            error[0].replace("<p class='error'>", "").replace("</p>", "") !=
-              "Nejsi finalista, takže se neobjevíš ve výsledcích."
-          )
-            reject(
-              error[0].replace("<p class='error'>", "").replace("</p>", "")
-            );
-          else resolve(true);
+          if(r.status == 429) reject("Překročen limit odesílání výstupu, zkuste to znovu později");
+          if(r.data.state == "success"){
+            resolve(true)
+          }
+          else{
+            reject("Úloha nebyla vyřešena správně")
+          }
         })
         .catch((e) => {
           reject(`sendResult CHYBA:\n${e.message}`);

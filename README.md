@@ -13,28 +13,21 @@
 - [ ] Získat informace o úkolu (Jméno, popis)
 - [x] Číst tabulku výsledků (i z archivu :)
 
-## Příklad použití
-```js
-const { Agent, ResultsInfo } = require("kasiopeajsapi")
+## Breaking changes ve verzi 2.0.0
+Kasiopea se hodně změnila, verze `2.0.0` je dělaná hodně narychlo, lepší řešení zkusím dodat později
 
-Agent.login("email", "heslo").then(async (ag) => { // MÍSTO email A heslo NAPIŠTE VAŠE PŘIHL. ÚDAJE
-    ag.eoh = 2; // NASTAVÍ, JESTLI SE MÁ STÁHNOUT LEHKÝ VSTUP (1) NEBO TĚŽKÝ (2), VÝCHOZÍ HODNOTA JE 1
-    ag.url = "/archiv/2019/doma/A/" // ODKAZ NA ÚKOL = VŠE ZA "https://kasiopea.matfyz.cz"
-    let taskInput = await ag.getTask(); // ZÍSKÁ VSTUP A ULOŽÍ DO PROMĚNNÉ, ZE KTERÉ HO MŮŽETE VZÍT V KÓDU
-
-    // SEM VLOŽTE VÁŠ KÓD
-    
-    let vysledek = await ag.sendResult(reseni) // PROMĚNNOU "reseni" MUSÍTE VYTVOŘIT A MUSÍ BÝT STRING
-    if (vysledek) console.log("Hurá! Úkol odevzdán") // KDYŽ SE VÝSLEDEK ÚSPĚŠNĚ ODEŠLE A JE SPRÁVNÝ, VRÁTÍ FUNKCE l.sendResult TRUE, POKUD BUDE NĚJAKÝ PROBLÉM PŘI ODESÍLÁNÍ NEBO JE VÝSLEDEK NESPRÁVNÝ, VRÁTI PromiseRejectionWarning
-
-    
-})
-
-ResultsInfo.getParticipants("/archiv/2019/doma/vysledky.html").then((r) => {
-    console.log(r[0]) // ZÍSKÁ PRVNÍHO
-})
+- úkoly se neidentifikují podle URL, ale podle jejich čísla, to lze zjistit otevřením `nástrojů pro vývojáře > Síť`, kde naleznete požadavek typu `https://kasiopea.matfyz.cz/api/tasks/2`, kde `2` je číslo úkolu.
+```diff
+- l.url = "/archiv/2019/doma/A/"
++ l.task = 101
 ```
+- přihlašování již není pomocí form-data, ale JSONu
+- požadavky používají `X-KASIOPEA-AUTH-TOKEN`
 
-## [Funkční příklad](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A.js)
+Jinak by vše mělo fungovat jako předtím :)
 
-Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays)
+## [Funkční příklad (Verze 1.4.0)](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A_old.js)
+## [Funkční příklad (Verze 2.0.0)](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A_old.js)
+
+
+**Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays)**
