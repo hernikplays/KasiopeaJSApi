@@ -27,7 +27,7 @@ Kasiopea se hodně změnila, verze `2.0.0` je dělaná hodně narychlo, lepší 
 Jinak by vše mělo fungovat jako předtím :)
 
 ## [Funkční příklad (Verze 1.4.0)](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A_old.js)
-## [Funkční příklad (Verze 2.0.0)](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A_old.js)
+## [Funkční příklad (Verze 2.0.0)](https://github.com/hernikplays/KasiopeaJSApi/blob/main/examples/archiv_2019_A.js)
 
 
 **Pokud máte nějaký dotaz/problém, můžete si [otevřít Issue](https://github.com/hernikplays/KasiopeaJSApi/issues) nebo mi napsat na [Twitter](https://twitter.com/hernikplays)**
